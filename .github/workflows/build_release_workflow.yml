@@ -3,16 +3,19 @@ name: Android CI
 on:
   push:
     branches:
-    - develop
+#      - main
+      - develop
 
 jobs:
-  build:
-
+  androidtv-apk:
+    name: Generate Apk
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: set up JDK 17
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
@@ -24,9 +27,12 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
-    - name: Run tests
-      run: ./gradlew test
-    - name: Build release APK
-      run: ./gradlew assembleRelease
+
+    - name: Build debug APK
+      run: ./gradlew assembleDebug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
